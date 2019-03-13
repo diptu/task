@@ -5,6 +5,26 @@ from .serializers import SubscriptionSerializer , JoinVSChannelSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django.db import connection
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.utils.dateparse import parse_date
+from django.db.models import Count
+
+class ListSubscription(APIView):
+
+    def get(self, request, format=None):
+       
+        print('starting')
+
+        data = Subscription.objects.values('subscription_status').annotate(Count('subscription_status'))            # Select the count of the grouping
+                          
+        #data         = [parse_date(subscription.subscription_on) for subscription in Subscription.objects.filter(current_product_code='TonicBasic')]
+        #joining_date   = [subscription.subscription_on for subscription in Subscription.objects.filter(subscription_status='TonicBasic')
+        print(data)
+        print('--completed--')
+        #return Response({"data": data})
+        return Response(data)
+
 class SubscriptionListView(ListAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
